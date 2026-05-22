@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image');
             $table->timestamps();
 
+            $table->index('price');
             $table->fullText(['title', 'content']);
         });
     }
