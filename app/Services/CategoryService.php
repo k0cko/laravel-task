@@ -8,6 +8,6 @@ class CategoryService
 {
     public function getAll()
     {
-        return Category::withCount('products')->get();
+        return Category::withCount('products')->paginate(25);
     }
 }
