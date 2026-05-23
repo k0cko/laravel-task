@@ -15,13 +15,19 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        $categoryIds = Category::query()->pluck('id');
+        $categories = Category::all();
+        $categoryIds = $categories->pluck('id');
         
         $totalProducts = 500000;
         $chunkSize = 5000;
         $now = now();
 
         $lastProductId = (Product::max('id') ?? 0) + 1;
+
+        $denormalizationData = [];
+        foreach ($categoryIds as $id) {
+            $denormalizationData[$id] = 0;
+        }
 
         for ($i = 0; $i < ($totalProducts / $chunkSize); $i++) {
             $productsData = Product::factory($chunkSize)->raw([
@@ -40,12 +46,20 @@ class ProductSeeder extends Seeder
                         'product_id' => $lastProductId,
                         'category_id' => $categoryId,
                     ];
+
+                    $denormalizationData[$categoryId] += 1;
                 }
 
                 $lastProductId++;
             }
 
             DB::table('category_product')->insert($pivotData);
+        }
+
+        foreach ($categories as $category) {
+            $category->update([
+                'products_count' => $denormalizationData[$category->id]
+            ]);
         }
     }
 }

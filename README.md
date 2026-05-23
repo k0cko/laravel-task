@@ -43,6 +43,12 @@ Same goes for categories where i call `withCount()` on the products, to get how 
 
 I used `simplePaginate()` for the massive products dataset to eliminate slow `COUNT(*)` queries, but kept standard `paginate()` for the small categories table.
 
+I've tried to optimize the `ProductSeeder` by mass inserting the records instead of calling `create()`, because doing the latter would result in as many queries to the DB as products we want to create.
+
+After seeding the DB with a lot of data, during testing of the endpoints I've found out that `/categories` endpoint is very slow (6sec response) because of the `withCount('products')`. This made me drop this function call and refactor the models and seeders, implementing a denormalization technique. I've added `products_count` column to `Category` model which holds the count of the products linked to the category, thus speeding the response 400x faster (6sec vs 15ms).
+
 As someone new to Laravel, my primary focus was making sure I adopted the framework's native tools and conventions correctly from the start
 
+## Production upgrades
 
+For the denormalization to work in a production environment, the `products_count` field should be maintained via Event/EventListener triggered whenever a product is attached to or detached from a category (pivot table updates).
