@@ -19,7 +19,7 @@ class ProductFactory extends Factory
     {
         return [
             'price' => fake()->randomFloat(2, 0, 1000),
-            'title' => fake()->words(asText: true),
+            'title' => rtrim(fake()->realText(40), '.'),
             'content' => fake()->realText(),
             'image' => 'placeholder.jpg',
         ];

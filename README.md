@@ -26,12 +26,25 @@ This is a back-end REST API given as a task for a job application.
 ## API Endpoints
 
 `GET /api/products` - Returns all products in the DB, paginated by 25.
-- Parameters
-  - `search` - Does a fullText search on the title and content columns
-  - `price_from` - Filters products with higher or equal price with the user request
-  - `price_to` - Filters products with lower or equal price with the user request
+
+**Query Parmeters (Optional):**
+  - `search` - Does a Full-text search on title and content columns
+  - `price_from` - Filters products with price >= value
+  - `price_to` - Filters products with price <= value
 
 `GET /api/categories` - Returns all categories in the DB, paginated by 25. Each record shows how many products are linked to the specific category.
+
+## Postman Collection
+
+To make testing easier, I've included a **Postman Collection** which contains all requests and pre-saved response examples.
+
+**Location:** `laravel-task.postman_collection.json`
+
+**How to import:**
+1. Open Postman
+2. Click on **Import** (top left)
+3. Choose **File** and select the collection
+4. Set the environment collection variable `baseUrl` to `http://localhost/api`
 
 ## Thought process
 
@@ -39,7 +52,6 @@ Because the task said that the API should be able to filter products by `price` 
 The `price` column is indexed normally, while the `title` and `content` have a composite full-text index.
 
 When presenting the products, instead of calling `$this->categories` on each record, I eager load the `categories` through Laravel's `with()` function, thus optimizing the queries.
-Same goes for categories where i call `withCount()` on the products, to get how many products are linked to each category.
 
 I used `simplePaginate()` for the massive products dataset to eliminate slow `COUNT(*)` queries, but kept standard `paginate()` for the small categories table.
 
