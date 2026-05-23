@@ -8,7 +8,7 @@ use App\Services\CategoryService;
 class CategoryController extends Controller
 {
     public function __construct(
-        private CategoryService $service,
+        private readonly CategoryService $service,
     ) {}
 
     /**
