@@ -15,20 +15,34 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = Category::all();
-        for ($i = 0; $i < 100; $i++) {
-            $products = Product::factory(500)->create();
+        $categoryIds = Category::query()->pluck('id');
+        
+        $totalProducts = 500000;
+        $chunkSize = 5000;
+        $now = now();
+
+        $lastProductId = (Product::max('id') ?? 0) + 1;
+
+        for ($i = 0; $i < ($totalProducts / $chunkSize); $i++) {
+            $productsData = Product::factory($chunkSize)->raw([
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            Product::insert($productsData);
+
             $pivotData = [];
-
-            foreach ($products as $product) {
-                $randomCategoryIds = $categories->random(random_int(1, 3))->pluck('id');
-
+            foreach ($productsData as $product) {
+                $randomCategoryIds = $categoryIds->random(random_int(1, 3));
+                
                 foreach ($randomCategoryIds as $categoryId) {
                     $pivotData[] = [
-                        'product_id' => $product->id,
+                        'product_id' => $lastProductId,
                         'category_id' => $categoryId,
                     ];
                 }
+
+                $lastProductId++;
             }
 
             DB::table('category_product')->insert($pivotData);
