@@ -28,11 +28,15 @@ This is a back-end REST API given as a task for a job application.
 `GET /api/products` - Returns all products in the DB, paginated by 25.
 
 **Query Parmeters (Optional):**
+  - `page` - The page number for pagination.
   - `search` - Does a Full-text search on title and content columns
   - `price_from` - Filters products with price >= value
   - `price_to` - Filters products with price <= value
 
 `GET /api/categories` - Returns all categories in the DB, paginated by 25. Each record shows how many products are linked to the specific category.
+
+**Query Parmeters (Optional):**
+  - `page` - The page number for pagination.
 
 ## Postman Collection
 
